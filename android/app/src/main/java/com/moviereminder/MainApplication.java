@@ -1,4 +1,4 @@
-package com.moviereminder;
+package com.yuhyeon.moviereminder;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

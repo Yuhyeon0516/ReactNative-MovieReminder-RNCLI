@@ -5,3 +5,5 @@ function App(): JSX.Element {
 }
 
 export default App;
+
+//com.yuhyeon.moviereminder
