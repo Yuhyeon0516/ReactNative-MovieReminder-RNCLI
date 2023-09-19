@@ -17,7 +17,7 @@ const styles = StyleSheet.create({
 
 interface SectionProps {
     title: string;
-    children: React.ReactNode;
+    children?: React.ReactNode;
 }
 
 export default function Section({title, children}: SectionProps) {
