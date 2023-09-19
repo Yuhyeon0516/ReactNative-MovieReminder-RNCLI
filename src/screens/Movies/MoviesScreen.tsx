@@ -1,16 +1,15 @@
 import React from 'react';
 import {
-    SafeAreaView,
     FlatList,
     StyleSheet,
     View,
-    StatusBar,
     ActivityIndicator,
     RefreshControl,
 } from 'react-native';
 import useMovies from './useMovies';
 import Movie from './Movie';
 import OpenColor from 'open-color';
+import Screen from '../../components/Screen';
 
 const styles = StyleSheet.create({
     container: {
@@ -34,8 +33,7 @@ export default function MoviesScreen() {
     const {movies, isLoading, loadMore, canLoadMore, refresh} = useMovies();
 
     return (
-        <SafeAreaView style={styles.container}>
-            <StatusBar barStyle={'light-content'} />
+        <Screen headerVisible={false}>
             {isLoading ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator color={OpenColor.white} />
@@ -72,6 +70,6 @@ export default function MoviesScreen() {
                     }
                 />
             )}
-        </SafeAreaView>
+        </Screen>
     );
 }
