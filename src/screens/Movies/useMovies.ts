@@ -15,16 +15,17 @@ export default function useMovies() {
         return result;
     }, []);
 
-    const {data, isLoading, fetchNextPage, hasNextPage} = useInfiniteQuery({
-        queryKey: ['upcomming-movies'],
-        queryFn: getUpcommingMovies,
-        getNextPageParam: lastPage => {
-            if (lastPage.page < lastPage.totalPages) {
-                return lastPage.page + 1;
-            }
-            return undefined;
-        },
-    });
+    const {data, isLoading, fetchNextPage, hasNextPage, refetch} =
+        useInfiniteQuery({
+            queryKey: ['upcomming-movies'],
+            queryFn: getUpcommingMovies,
+            getNextPageParam: lastPage => {
+                if (lastPage.page < lastPage.totalPages) {
+                    return lastPage.page + 1;
+                }
+                return undefined;
+            },
+        });
 
     const movies = useMemo(() => {
         return data?.pages.reduce<Movie[]>((allMovies, page) => {
@@ -36,10 +37,15 @@ export default function useMovies() {
         fetchNextPage();
     }, [fetchNextPage]);
 
+    const refresh = useCallback(() => {
+        refetch();
+    }, [refetch]);
+
     return {
         movies,
         isLoading,
         loadMore,
         canLoadMore: hasNextPage,
+        refresh,
     };
 }

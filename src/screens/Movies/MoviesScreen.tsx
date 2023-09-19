@@ -6,6 +6,7 @@ import {
     View,
     StatusBar,
     ActivityIndicator,
+    RefreshControl,
 } from 'react-native';
 import useMovies from './useMovies';
 import Movie from './Movie';
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
 });
 
 export default function MoviesScreen() {
-    const {movies, isLoading, loadMore, canLoadMore} = useMovies();
+    const {movies, isLoading, loadMore, canLoadMore, refresh} = useMovies();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -61,6 +62,13 @@ export default function MoviesScreen() {
                         }
                     }}
                     onEndReachedThreshold={0.7}
+                    refreshControl={
+                        <RefreshControl
+                            onRefresh={refresh}
+                            refreshing={isLoading}
+                            tintColor={OpenColor.white}
+                        />
+                    }
                 />
             )}
         </SafeAreaView>
