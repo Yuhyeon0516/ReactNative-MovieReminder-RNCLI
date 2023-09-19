@@ -1,5 +1,6 @@
 import {useMemo} from 'react';
 import {Movie} from '../../types';
+import {getDiscoverMovies} from '../../modules/ApiRequest';
 
 const data = [
     {
