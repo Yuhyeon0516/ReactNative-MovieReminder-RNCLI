@@ -4,6 +4,7 @@ import React from 'react';
 import {RootStackParamList} from './src/types';
 import MoviesScreen from './src/screens/Movies/MoviesScreen';
 import {QueryClient, QueryClientProvider} from '@tanstack/react-query';
+import DetailScreen from './src/screens/Detail/DetailScreen';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 const queryClient = new QueryClient();
@@ -14,6 +15,7 @@ function App(): JSX.Element {
             <NavigationContainer>
                 <Stack.Navigator screenOptions={{headerShown: false}}>
                     <Stack.Screen name="Movies" component={MoviesScreen} />
+                    <Stack.Screen name="Detail" component={DetailScreen} />
                 </Stack.Navigator>
             </NavigationContainer>
         </QueryClientProvider>

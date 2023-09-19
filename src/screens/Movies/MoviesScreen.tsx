@@ -46,6 +46,7 @@ export default function MoviesScreen() {
                     data={movies}
                     renderItem={({item: movie}) => (
                         <Movie
+                            id={movie.id}
                             title={movie.title}
                             originalTitle={movie.originalTitle}
                             releaseDate={movie.releaseDate}
