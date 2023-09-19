@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
 });
 
 export default function MoviesScreen() {
-    const {movies, isLoading} = useMovies();
+    const {movies, isLoading, loadMore, canLoadMore} = useMovies();
 
     return (
         <SafeAreaView style={styles.container}>
@@ -55,6 +55,12 @@ export default function MoviesScreen() {
                     ItemSeparatorComponent={() => (
                         <View style={styles.separator} />
                     )}
+                    onEndReached={() => {
+                        if (canLoadMore) {
+                            loadMore();
+                        }
+                    }}
+                    onEndReachedThreshold={0.7}
                 />
             )}
         </SafeAreaView>
