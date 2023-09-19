@@ -1,27 +1,45 @@
-import {useCallback} from 'react';
+import {useCallback, useMemo} from 'react';
 import {getDiscoverMovies} from '../../modules/ApiRequest';
-import {useQuery} from '@tanstack/react-query';
+import {useInfiniteQuery} from '@tanstack/react-query';
 import moment from 'moment';
+import {Movie} from '../../types';
 
 export default function useMovies() {
-    const getUpcommingMovies = useCallback(async () => {
+    const getUpcommingMovies = useCallback(async ({pageParam = 1}) => {
         const result = await getDiscoverMovies({
             releaseDateGte: moment().format('YYYY-MM-DD'),
             releaseDateLte: moment().add(1, 'years').format('YYYY-MM-DD'),
+            page: pageParam,
         });
 
         return result;
     }, []);
 
-    const {data, isLoading} = useQuery({
+    const {data, isLoading, fetchNextPage, hasNextPage} = useInfiniteQuery({
         queryKey: ['upcomming-movies'],
         queryFn: getUpcommingMovies,
+        getNextPageParam: lastPage => {
+            if (lastPage.page < lastPage.totalPages) {
+                return lastPage.page + 1;
+            }
+            return undefined;
+        },
     });
 
-    const movies = data?.results ?? [];
+    const movies = useMemo(() => {
+        return data?.pages.reduce<Movie[]>((allMovies, page) => {
+            return allMovies.concat(page.results);
+        }, []);
+    }, [data]);
+
+    const loadMore = useCallback(() => {
+        fetchNextPage();
+    }, [fetchNextPage]);
 
     return {
         movies,
         isLoading,
+        loadMore,
+        canLoadMore: hasNextPage,
     };
 }

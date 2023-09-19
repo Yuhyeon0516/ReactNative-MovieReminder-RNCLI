@@ -32,11 +32,13 @@ interface GetDiscoverMoviesResponse {
 interface GetDiscoverMoviesProps {
     releaseDateGte?: string;
     releaseDateLte?: string;
+    page?: number;
 }
 
 export async function getDiscoverMovies({
     releaseDateGte,
     releaseDateLte,
+    page,
 }: GetDiscoverMoviesProps) {
     // 개봉 예정 영화
     const response = await instance.get<GetDiscoverMoviesResponse>(
@@ -45,6 +47,7 @@ export async function getDiscoverMovies({
             params: {
                 ['release_date.gte']: releaseDateGte,
                 ['release_date.lte']: releaseDateLte,
+                page: page,
             },
         },
     );
