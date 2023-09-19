@@ -1,10 +1,12 @@
 import {
     ActivityIndicator,
+    Alert,
     FlatList,
     Image,
     ScrollView,
     StyleSheet,
     Text,
+    TouchableOpacity,
     View,
 } from 'react-native';
 import React, {useCallback} from 'react';
@@ -16,6 +18,8 @@ import OpenColor from 'open-color';
 import Section from './Section';
 import People from './People';
 import YouTubeVideo from './YouTubeVideo';
+import CalendarModule from '../../modules/CalendarModule';
+import moment from 'moment';
 
 const styles = StyleSheet.create({
     loadingContainer: {
@@ -66,6 +70,16 @@ const styles = StyleSheet.create({
     verticalSeparator: {
         height: 16,
     },
+    addToCalendarButton: {
+        marginTop: 8,
+        backgroundColor: OpenColor.white,
+        borderRadius: 8,
+        alignItems: 'center',
+        padding: 12,
+    },
+    addToCalendarButtonText: {
+        color: OpenColor.black,
+    },
 });
 
 export default function DetailScreen() {
@@ -111,6 +125,25 @@ export default function DetailScreen() {
                             }>{`개봉일: ${movie.releaseDate}`}</Text>
                     </View>
                 </View>
+
+                <TouchableOpacity
+                    style={styles.addToCalendarButton}
+                    onPress={async () => {
+                        try {
+                            await CalendarModule.createCalendarEvent(
+                                moment(movie.releaseDate).valueOf() / 1000,
+                                movie.title,
+                            );
+
+                            Alert.alert('캘린더 등록이 완료되었습니다.');
+                        } catch (error: any) {
+                            Alert.alert(error.message);
+                        }
+                    }}>
+                    <Text style={styles.addToCalendarButtonText}>
+                        캘린더에 추가
+                    </Text>
+                </TouchableOpacity>
 
                 <Section title="소개">
                     <Text style={styles.overviewText}>{movie.overview}</Text>
