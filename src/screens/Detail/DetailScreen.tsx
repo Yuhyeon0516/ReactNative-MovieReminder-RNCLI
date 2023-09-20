@@ -9,7 +9,7 @@ import {
     TouchableOpacity,
     View,
 } from 'react-native';
-import React, {useCallback} from 'react';
+import React, {useCallback, useRef} from 'react';
 import Screen from '../../components/Screen';
 import {RouteProp, useRoute} from '@react-navigation/native';
 import {RootStackParamList} from '../../types';
@@ -21,6 +21,7 @@ import YouTubeVideo from './YouTubeVideo';
 import CalendarModule from '../../modules/CalendarModule';
 import moment from 'moment';
 import useReminder from '../../hook/useReminder';
+import RewardAds, {RewardAdsRef} from '../../components/RewardAds';
 
 const styles = StyleSheet.create({
     loadingContainer: {
@@ -89,7 +90,9 @@ export default function DetailScreen() {
     } = useRoute<RouteProp<RootStackParamList, 'Detail'>>();
 
     const {movie, isLoading} = useDetail({id});
-    const {addReminder, hasReminder, removeReminder} = useReminder();
+    const {addReminder, hasReminder, removeReminder, canAddReminder} =
+        useReminder();
+    const rewardAdsRef = useRef<RewardAdsRef>(null);
 
     const renderMovie = useCallback(() => {
         if (!movie) {
@@ -166,16 +169,47 @@ export default function DetailScreen() {
                     <TouchableOpacity
                         style={styles.addToCalendarButton}
                         onPress={async () => {
-                            try {
-                                await addReminder(
-                                    movie.id,
-                                    movie.releaseDate,
-                                    movie.title,
-                                );
+                            async function addReminderHandler() {
+                                if (movie != null) {
+                                    try {
+                                        await addReminder(
+                                            movie.id,
+                                            movie.releaseDate,
+                                            movie.title,
+                                        );
 
-                                Alert.alert('알림 등록이 완료되었습니다.');
-                            } catch (error: any) {
-                                Alert.alert(error.message);
+                                        Alert.alert(
+                                            '알림 등록이 완료되었습니다.',
+                                        );
+                                    } catch (error: any) {
+                                        Alert.alert(error.message);
+                                    }
+                                }
+                            }
+                            if (await canAddReminder()) {
+                                addReminderHandler();
+                            } else {
+                                Alert.alert(
+                                    '광고를 보고 리마인더를 등록하시겠습니까?',
+                                    undefined,
+                                    [
+                                        {
+                                            text: '아니오',
+                                        },
+                                        {
+                                            text: '네',
+                                            onPress: () => {
+                                                rewardAdsRef.current?.show({
+                                                    onRewarded: rewarded => {
+                                                        if (rewarded) {
+                                                            addReminderHandler();
+                                                        }
+                                                    },
+                                                });
+                                            },
+                                        },
+                                    ],
+                                );
                             }
                         }}>
                         <Text style={styles.addToCalendarButtonText}>
@@ -237,7 +271,7 @@ export default function DetailScreen() {
                 )}
             </ScrollView>
         );
-    }, [addReminder, hasReminder, movie, removeReminder]);
+    }, [addReminder, canAddReminder, hasReminder, movie, removeReminder]);
 
     return (
         <Screen>
@@ -248,6 +282,7 @@ export default function DetailScreen() {
             ) : (
                 renderMovie()
             )}
+            <RewardAds ref={rewardAdsRef} />
         </Screen>
     );
 }
