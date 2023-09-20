@@ -4,6 +4,7 @@ import notifee, {
     AndroidNotificationSetting,
     AuthorizationStatus,
     TimestampTrigger,
+    TriggerNotification,
     TriggerType,
 } from '@notifee/react-native';
 import {Platform} from 'react-native';
@@ -11,6 +12,7 @@ import moment from 'moment';
 
 export default function useReminder() {
     const [channelId, setChannelId] = useState<string | null>(null);
+    const [reminders, setReminders] = useState<TriggerNotification[]>([]);
 
     useEffect(() => {
         (async () => {
@@ -72,7 +74,19 @@ export default function useReminder() {
         [channelId],
     );
 
+    const loadReminders = useCallback(async () => {
+        return await notifee.getTriggerNotifications();
+    }, []);
+
+    useEffect(() => {
+        (async () => {
+            const notifications = await loadReminders();
+            setReminders(notifications);
+        })();
+    }, [loadReminders]);
+
     return {
         addReminder,
+        reminders,
     };
 }
