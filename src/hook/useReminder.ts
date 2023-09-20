@@ -53,7 +53,8 @@ export default function useReminder() {
 
             const trigger: TimestampTrigger = {
                 type: TriggerType.TIMESTAMP,
-                timestamp: moment(releaseDate).valueOf(),
+                // timestamp: moment(releaseDate).valueOf(),
+                timestamp: moment().add(5, 'seconds').valueOf(),
             };
 
             await notifee.createTriggerNotification(
