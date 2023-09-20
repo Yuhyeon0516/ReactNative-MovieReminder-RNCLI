@@ -14,4 +14,4 @@ If you want to know more, please check out the video below.
 
 # Result
 
-![Result]()
+![Result](https://github.com/Yuhyeon0516/ReactNative-MovieReminder-RNCLI/assets/120432007/294b7a7f-be06-4739-99cb-af0dbeaf68c7)
