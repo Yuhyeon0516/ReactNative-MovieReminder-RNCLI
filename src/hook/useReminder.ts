@@ -4,6 +4,7 @@ import notifee, {
     AndroidNotificationSetting,
     AuthorizationStatus,
     TimestampTrigger,
+    TriggerNotification,
     TriggerType,
 } from '@notifee/react-native';
 import {Platform} from 'react-native';
@@ -11,6 +12,7 @@ import moment from 'moment';
 
 export default function useReminder() {
     const [channelId, setChannelId] = useState<string | null>(null);
+    const [reminders, setReminders] = useState<TriggerNotification[]>([]);
 
     useEffect(() => {
         (async () => {
@@ -27,6 +29,15 @@ export default function useReminder() {
             }
         })();
     }, []);
+
+    const loadReminders = useCallback(async () => {
+        const notifications = await notifee.getTriggerNotifications();
+        setReminders(notifications);
+    }, []);
+
+    useEffect(() => {
+        loadReminders();
+    }, [loadReminders]);
 
     const addReminder = useCallback(
         async (movieId: number, releaseDate: string, title: string) => {
@@ -53,8 +64,8 @@ export default function useReminder() {
 
             const trigger: TimestampTrigger = {
                 type: TriggerType.TIMESTAMP,
-                // timestamp: moment(releaseDate).valueOf(),
-                timestamp: moment().add(5, 'seconds').valueOf(),
+                timestamp: moment(releaseDate).valueOf(),
+                // timestamp: moment().add(5, 'seconds').valueOf(),
             };
 
             await notifee.createTriggerNotification(
@@ -68,11 +79,32 @@ export default function useReminder() {
                 },
                 trigger,
             );
+
+            await loadReminders();
         },
-        [channelId],
+        [channelId, loadReminders],
+    );
+
+    const removeReminder = useCallback(
+        async (id: string) => {
+            await notifee.cancelTriggerNotification(id);
+            loadReminders();
+        },
+        [loadReminders],
+    );
+
+    const hasReminder = useCallback(
+        (id: string) => {
+            const reminder = reminders.find(r => r.notification.id === id);
+            return reminder;
+        },
+        [reminders],
     );
 
     return {
         addReminder,
+        reminders,
+        removeReminder,
+        hasReminder,
     };
 }
