@@ -12,9 +12,10 @@ import EventKit
 
 class CalendarModule: NSObject {
   var store = EKEventStore()
+  @available(iOS 17.0, *)
   @objc func createCalendarEvent(_ timestampInSec: Double, title title: String, resolver resolve: @escaping RCTPromiseResolveBlock,
                                  rejecter reject: @escaping RCTPromiseRejectBlock) -> Void {
-    store.requestAccess(to: .event, completion: { granted, error in
+    store.requestFullAccessToEvents(completion: { granted, error in
       if (error != nil) {
         reject("Permission_error", error?.localizedDescription, error)
         return
