@@ -1,15 +1,19 @@
-import React from 'react';
+import React, {useCallback} from 'react';
 import {
     FlatList,
     StyleSheet,
     View,
     ActivityIndicator,
     RefreshControl,
+    TouchableOpacity,
 } from 'react-native';
 import useMovies from './useMovies';
 import Movie from './Movie';
 import OpenColor from 'open-color';
 import Screen from '../../components/Screen';
+import {NavigationProp, useNavigation} from '@react-navigation/native';
+import {RootStackParamList} from '../../types';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 const styles = StyleSheet.create({
     container: {
@@ -27,13 +31,41 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
+    headerRightComponent: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    alarmButton: {},
+    alarmIcon: {
+        fontSize: 24,
+        color: OpenColor.white,
+    },
 });
 
 export default function MoviesScreen() {
     const {movies, isLoading, loadMore, canLoadMore, refresh} = useMovies();
+    const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
+    const renderRightComponent = useCallback(() => {
+        return (
+            <View style={styles.headerRightComponent}>
+                <TouchableOpacity
+                    style={styles.alarmButton}
+                    onPress={() => {
+                        navigation.navigate('Reminders');
+                    }}>
+                    <MaterialIcons
+                        name="notifications"
+                        style={styles.alarmIcon}
+                    />
+                </TouchableOpacity>
+            </View>
+        );
+    }, [navigation]);
 
     return (
-        <Screen headerVisible={false}>
+        <Screen renderRightComponent={renderRightComponent}>
             {isLoading ? (
                 <View style={styles.loadingContainer}>
                     <ActivityIndicator color={OpenColor.white} />
