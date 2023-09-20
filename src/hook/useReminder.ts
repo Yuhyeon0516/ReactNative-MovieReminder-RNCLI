@@ -30,6 +30,15 @@ export default function useReminder() {
         })();
     }, []);
 
+    const loadReminders = useCallback(async () => {
+        const notifications = await notifee.getTriggerNotifications();
+        setReminders(notifications);
+    }, []);
+
+    useEffect(() => {
+        loadReminders();
+    }, [loadReminders]);
+
     const addReminder = useCallback(
         async (movieId: number, releaseDate: string, title: string) => {
             const settings = await notifee.requestPermission();
@@ -70,18 +79,11 @@ export default function useReminder() {
                 },
                 trigger,
             );
+
+            await loadReminders();
         },
-        [channelId],
+        [channelId, loadReminders],
     );
-
-    const loadReminders = useCallback(async () => {
-        const notifications = await notifee.getTriggerNotifications();
-        setReminders(notifications);
-    }, []);
-
-    useEffect(() => {
-        loadReminders();
-    }, [loadReminders]);
 
     const removeReminder = useCallback(
         async (id: string) => {
@@ -91,9 +93,18 @@ export default function useReminder() {
         [loadReminders],
     );
 
+    const hasReminder = useCallback(
+        (id: string) => {
+            const reminder = reminders.find(r => r.notification.id === id);
+            return reminder;
+        },
+        [reminders],
+    );
+
     return {
         addReminder,
         reminders,
         removeReminder,
+        hasReminder,
     };
 }
