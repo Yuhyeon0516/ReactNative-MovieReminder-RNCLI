@@ -7,7 +7,7 @@ import {Movie} from '../../types';
 export default function useMovies() {
     const getUpcommingMovies = useCallback(async ({pageParam = 1}) => {
         const result = await getDiscoverMovies({
-            releaseDateGte: moment().format('YYYY-MM-DD'),
+            releaseDateGte: moment().add(1, 'days').format('YYYY-MM-DD'),
             releaseDateLte: moment().add(1, 'years').format('YYYY-MM-DD'),
             page: pageParam,
         });
