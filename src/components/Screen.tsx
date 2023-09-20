@@ -47,13 +47,19 @@ const styles = StyleSheet.create({
     },
 });
 
-interface ScreenProp {
+interface ScreenProps {
     children?: React.ReactNode;
     title?: string;
     headerVisible?: boolean;
+    renderRightComponent?: () => JSX.Element;
 }
 
-const Screen = ({children, title, headerVisible = true}: ScreenProp) => {
+const Screen = ({
+    children,
+    title,
+    headerVisible = true,
+    renderRightComponent,
+}: ScreenProps) => {
     const navigation = useNavigation();
     const onPressBackButton = useCallback(() => {
         navigation.goBack();
@@ -76,7 +82,9 @@ const Screen = ({children, title, headerVisible = true}: ScreenProp) => {
                     <View style={styles.center}>
                         <Text style={styles.headerTitle}>{title}</Text>
                     </View>
-                    <View style={styles.right} />
+                    <View style={styles.right}>
+                        {renderRightComponent != null && renderRightComponent()}
+                    </View>
                 </View>
             )}
             <View style={styles.content}>{children}</View>
