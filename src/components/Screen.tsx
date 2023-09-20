@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Colors from 'open-color';
+import ScreenBannerAds from './ScreenBannerAds';
 
 const styles = StyleSheet.create({
     container: {
@@ -64,6 +65,7 @@ const Screen = ({
     const onPressBackButton = useCallback(() => {
         navigation.goBack();
     }, [navigation]);
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle={'light-content'} />
@@ -88,6 +90,7 @@ const Screen = ({
                 </View>
             )}
             <View style={styles.content}>{children}</View>
+            <ScreenBannerAds />
         </SafeAreaView>
     );
 };
