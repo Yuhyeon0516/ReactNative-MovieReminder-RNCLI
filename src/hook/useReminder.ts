@@ -75,18 +75,25 @@ export default function useReminder() {
     );
 
     const loadReminders = useCallback(async () => {
-        return await notifee.getTriggerNotifications();
+        const notifications = await notifee.getTriggerNotifications();
+        setReminders(notifications);
     }, []);
 
     useEffect(() => {
-        (async () => {
-            const notifications = await loadReminders();
-            setReminders(notifications);
-        })();
+        loadReminders();
     }, [loadReminders]);
+
+    const removeReminder = useCallback(
+        async (id: string) => {
+            await notifee.cancelTriggerNotification(id);
+            loadReminders();
+        },
+        [loadReminders],
+    );
 
     return {
         addReminder,
         reminders,
+        removeReminder,
     };
 }
